@@ -1,27 +1,27 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-
-
+;; run doom sync after modifying this file!
 ;; Jason config
 (setq user-full-name "Jason Bruce Jones" user-mail-address "jason@brucejones.biz")
 ;; theme
-(setq doom-theme 'deeper-blue)
-;; font
+(setq doom-theme 'doom-vibrant)
 
+;; font
 (setq doom-font (font-spec :family "Iosevka Aile" :size 20 :weight 'Regular))
 (setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18 :weight 'Regular))
+
 ;; line numbers
 (setq display-line-numbers-type 'relative)
+
 ;; projectile
 (setq projectile-project-search-path '("~/GitRepos/"))
+
 ;; org mode
 (setq org-directory "~/org/")
+
 ;; so we can use cider-eval-sexp-at-point within a comment block
 (setq clojure-toplevel-inside-comment-form t)
+
 ;; key mappings
 (global-set-key (kbd "M-p") 'drag-stuff-up)
 (global-set-key (kbd "M-n") 'drag-stuff-down)
@@ -32,6 +32,7 @@
 
 
 ;; which-key integration gives you pop-up of keybindings after pressing leader key for the mode.
+;; "s-l" means "super + l", which is "cmd+l"
 (use-package  lsp-mode
   :commands (lsp lsp-deferred)
   :init
@@ -79,7 +80,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type 'relative)
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
