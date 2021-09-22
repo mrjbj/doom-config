@@ -62,11 +62,11 @@
 ;; --------------------
 ;; ace window switching
 ;; --------------------
-(after! switch-window 
   (custom-set-faces!  '(aw-leading-char-face
-	      foreground "white" :background "red"
-	      weight bold :height 2.5 :box (:line-width 10 :color "blue"))))
-
+	                :foreground "white"
+                        :background "red" weight bold
+                        :height 2.5
+                        :box (:line-width 4 :color "red")))
 
 ;;-----------
 ;; JBJ Elixir Config
@@ -81,7 +81,7 @@
    (setq lsp-ui-sideline-diagnostic-max-lines '10)
 )
 
-(add-hook! elixir-mode 
- (setq flycheck-checker 'elixir-credo))
-;;(flycheck-select-checker 'elixir-credo)
+;;-- works!
+(add-hook! elixir-mode (setq flycheck-checker 'elixir-credo))
+
 
