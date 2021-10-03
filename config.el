@@ -71,7 +71,16 @@
 ;;-----------
 ;; JBJ Elixir Config
 ;;------------------
-(after! lsp-ui 
+(after! lsp-mode
+  (dolist (match
+           '("[/\\\\].direnv$"
+             "[/\\\\]node_modules$"
+             "[/\\\\]deps"
+             "[/\\\\]build"
+             "[/\\\\]_build"))
+    (add-to-list 'lsp-file-watch-ignored match)))
+
+(after! lsp-ui
    (setq lsp-ui-sideline-show-hover '1)
    (setq lsp-ui-doc-enable 't)
    (setq lsp-ui-doc-position 'bottom)
