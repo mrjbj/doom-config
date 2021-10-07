@@ -58,6 +58,11 @@
 	(evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
 	(evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
 
+;; projectile
+(setq projectile-project-search-path '("~/GitRepos/"))
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after 'window-split (switch-to-buffer))
 
 ;; --------------------
 ;; ace window switching
@@ -84,13 +89,12 @@
    (setq lsp-ui-sideline-show-hover '1)
    (setq lsp-ui-doc-enable 't)
    (setq lsp-ui-doc-position 'bottom)
-   (setq lsp-ui-doc-show-with-cursor 'nil)
+   (setq lsp-ui-doc-show-with-cursor 't)
    (setq lsp-ui-doc-show-with-mouse 't)
    (setq lsp-ui-doc-header 't)
    (setq lsp-ui-sideline-diagnostic-max-lines '10)
-)
+   (setq lsp-ui-peek-always-show 't))
 
-;;-- works!
-(add-hook! elixir-mode (setq flycheck-checker 'elixir-credo))
-
-
+;; works!
+(add-hook! elixir-mode
+  (setq flycheck-checker 'elixir-credo))
