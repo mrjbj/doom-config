@@ -98,3 +98,7 @@
 ;; works!
 (add-hook! elixir-mode
   (setq flycheck-checker 'elixir-credo))
+
+;; configure web-mode for html.heex template files.
+(add-to-list 'auto-mode-alist '("\\.html\\.heex\\'" . web-mode))
+(add-to-list '+format-on-save-enabled-modes 'web-mode 'append) ;;will disable format-all in web-mode buffers
