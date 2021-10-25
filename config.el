@@ -109,3 +109,6 @@
 
 (after! zoom-window
    (setq zoom-window-mode-line-color "DarkGreen"))
+
+(after! projectile
+  (setq projectile-enable-caching 'nil))
