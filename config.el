@@ -112,3 +112,5 @@
 
 (after! projectile
   (setq projectile-enable-caching 'nil))
+
+(setq global-tab-line-mode '1)
