@@ -1,12 +1,11 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
 ;; Jason config
 (setq user-full-name "Jason Bruce Jones" user-mail-address "jason@brucejones.biz")
 (setq doom-theme 'doom-vibrant)
 (setq doom-font (font-spec :family "Iosevka Aile" :size 20 :weight 'Regular))
 (setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18 :weight 'Regular))
 (setq display-line-numbers-type 'relative)
-(setq projectile-project-search-path '("~/GitRepos/"))
+(setq projectile-project-search-path '("~/GitData/"))
 (setq org-directory "~/org/")
 ;; (setq exec-path (append exec-path '("/Users/jasonjones/GitRepos/Elixir/dazzle/elixir-ls/release")))
 
@@ -16,53 +15,12 @@
 (define-key evil-normal-state-map "\C-e" 'evil-end-of-line)
 (global-set-key (kbd "M-p") 'drag-stuff-up)
 (global-set-key (kbd "M-n") 'drag-stuff-down)
-(global-set-key [f8] 'neotree-toggle)
+;;(global-set-key [f8] 'neotree-toggle)
 (global-set-key (kbd "C-0") 'ace-window)
 
 
-;; commented add-ins
-;; so we can use cider-eval-sexp-at-point within a comment block
+;; -- clojure
 (setq clojure-toplevel-inside-comment-form t)
-
-;; ------------------
-;; configure neotree
-;; ------------------ 
-;; configure neotree
-;; 1. open file retains git project as root node for neotree
-(defun neotree-project-dir ()
-  "Open neoTree using git root."
-  (interactive)
-  (let ((project-dir (projectile-project-root))
-      (file-name (buffer-file-name)))
-    (neotree-toggle)
-    (if project-dir
-       (if (neo-global--window-exists-p)
-            (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-
-;; neo-tree keymappings
-	;; jump to current file everytime neo tree is opened
-	(setq neo-smart-open t)
-	;; change neotree root whenever projectile change project executes
-	(setq projectfile-switch-project-action 'neotree-projectile-action)
-	;; key mappings for vi mode
-	(evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
-	(evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
-	(evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
-	(evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
-	;; (evil-define-key 'normal neotree-mode-map (kbd "g") 'neotree-refresh)
-	(evil-define-key 'normal neotree-mode-map (kbd "n") 'neotree-next-line)
-	(evil-define-key 'normal neotree-mode-map (kbd "p") 'neotree-previous-line)
-	(evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
-	(evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
-
-;; projectile
-(setq projectile-project-search-path '("~/GitRepos/"))
-
-(defadvice! prompt-for-buffer (&rest _)
-  :after 'window-split (switch-to-buffer))
 
 ;; --------------------
 ;; ace window switching
@@ -76,6 +34,14 @@
 ;;-----------
 ;; JBJ Elixir Config
 ;;------------------
+  (use-package! lsp-mode
+    :commands lsp
+    :diminish lsp-mode
+    :hook
+    (elixir-mode . lsp)
+    :init
+    (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls-1.12"))
+
 (after! lsp-mode
   (dolist (match
            '("[/\\\\].direnv$"
@@ -94,8 +60,8 @@
    (setq lsp-ui-doc-header 't)
    (setq lsp-ui-sideline-diagnostic-max-lines '10)
    (setq lsp-ui-peek-always-show 't))
-
-;; works!
+;;
+;; works! elixir-credo is added as dependency in mix.exs
 (add-hook! elixir-mode
   (setq flycheck-checker 'elixir-credo))
 
@@ -110,7 +76,27 @@
 (after! zoom-window
    (setq zoom-window-mode-line-color "DarkGreen"))
 
+;; search 1 level deep for git repos in GitData
 (after! projectile
-  (setq projectile-enable-caching 'nil))
+  (setq projectile-enable-caching 'nil)
+  (setq projectile-project-search-path '(("~/GitData" . 1))))
 
-(setq global-tab-line-mode '1)
+;;--------------------------
+;; End of Customizations
+;;--------------------------
+;; Here are some additional functions/macros that could help you configure Doom:
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
