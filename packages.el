@@ -2,12 +2,17 @@
 ;;; $DOOMDIR/packages.el
 
 ;; gitconfig-mode and gitignore-mode helps magit when editing .gitignore and .gitconfig files
-(package! gitconfig-mode
-  :recipe (:host github :repo "magit/git-modes" :files ("gitconfig-mode.el")))
-(package! gitignore-mode
-  :recipe (:host github :repo "magit/git-modes" :files ("gitignore-mode.el")))
-
+(package! gitconfig-mode :recipe (:host github :repo "magit/git-modes" :files ("gitconfig-mode.el")))
+(package! gitignore-mode :recipe (:host github :repo "magit/git-modes" :files ("gitignore-mode.el")))
+;; jbj packages
 (package! zoom-window)
+(package! lsp-origami)
+(package! mmm-mode)
+;;(package! dap-elixir)
+;; polymode-mode-map for keybindings
+;; C-n to move to next chunk, C-p to move previous
+;; (package! polymode :pin "44265e3")
+;; (package! polymode)
 
 ;;--------------------------
 ;; End of Customizations
