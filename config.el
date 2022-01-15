@@ -67,7 +67,7 @@
    (setq lsp-ui-doc-header 't)
    (setq lsp-ui-sideline-diagnostic-max-lines '10)
    (setq lsp-ui-sideline-show-hover nil)
-   (setq lsp-ui-peek-always-show 't))
+   (setq lsp-ui-peek-always-show nil))
 
 ;; enable code folding
 ;; keybindings include {z c, z o, z r} for close, open, recursive
@@ -148,6 +148,25 @@
 (after! projectile
   (setq projectile-enable-caching 'nil)
   (setq projectile-project-search-path '(("~/GitData" . 1))))
+
+
+;; bindings for multiple cursors
+(map! :leader
+      (:prefix-map ("d" . "Multiple Cursors")
+
+       (:desc "Make all " "m" #'evil-mc-make-all-cursors)
+       (:desc "Make & go next" "n" #'evil-mc-and-goto-next)
+       (:desc "No make but go next" "N" #'evil-mc-and-goto-next)
+
+       (:desc "Line beginning" "b" #'evil-mc-make-cursor-in-visual-selection-start)
+       (:desc "Line endings" "e" #'evil-mc-make-cursor-in-visual-selection-end)
+
+       (:desc "Pause making" "p" #'evil-mc-pause-cursors)
+       (:desc "Make here" "h" #'evil-mc-make-cursor-here)
+       (:desc "Resume cursors" "r" #'evil-mc-resume-cursors)
+
+       (:desc "Undo last" "u" #'evil-mc-undo-all-cursors)
+       (:desc "Undo all" "U" #'evil-mc-undo-all-cursors)))
 
 ;;--------------------------
 ;; End of Customizations
