@@ -152,13 +152,13 @@
 
 ;; bindings for multiple cursors
 (map! :leader
-      (:prefix-map ("d" . "Multiple Cursors")
+      (:prefix-map ("d" . "Cursors")
 
        (:desc "Make all " "m" #'evil-mc-make-all-cursors)
        (:desc "Make & go next" "n" #'evil-mc-and-goto-next)
        (:desc "No make but go next" "N" #'evil-mc-and-goto-next)
 
-       (:desc "Line beginning" "b" #'evil-mc-make-cursor-in-visual-selection-start)
+       (:desc "Line beginning" "b" #'evil-mc-make-cursor-in-visual-selection-beg)
        (:desc "Line endings" "e" #'evil-mc-make-cursor-in-visual-selection-end)
 
        (:desc "Pause making" "p" #'evil-mc-pause-cursors)
@@ -168,6 +168,50 @@
        (:desc "Undo last" "u" #'evil-mc-undo-all-cursors)
        (:desc "Undo all" "U" #'evil-mc-undo-all-cursors)))
 
+;; bindings for persp-mode
+(map! :leader
+      (:prefix-map ("e" . "Perspective")
+
+       (:desc "Next" "n" #'persp-next)
+       (:desc "Previous" "p" #'persp-prev)
+       (:desc "Kill buffer" "K" #'persp-kill-buffer)
+       (:desc "Window Switch" "S" #'persp-window-switch)
+       (:desc "Load full state" "l" #'persp-load-state-from-file)
+       (:desc "Load by name" "L" #'persp-load-from-file-by-names)
+       (:desc "Import Window Config" "i" #'persp-import-win-conf)
+       (:desc "Save to file by Name" "S" #'persp-save-to-file-by-names)
+       (:desc "Add buffer" "a" #'persp-add-buffer)
+       (:desc "Switch to buffer" "b" #'persp-switch-to-buffer)))
+
+;; ibuffer customizations... still debugging
+(setq ibuffer-saved-filter-groups
+      '(("home"
+         ("Elixir" (mode . elixir-mode))
+	 ("Web" (or (mode . html-mode)
+			(mode . css-mode)))
+	 ("Config" (or (filename . ".doom.d")
+			     (filename . "emacs-config")))
+         ("Elixir System" (or
+                   (name . "^\\*lsp-log\\*$")
+                   (name . "^\\*elixir-ls\\*$")
+                   (name . "^\\*alchemist-server\\*$")
+                   (name . "^\\*elixir-ls::stderr\\*$")))
+         ("System" (or
+                   (name . "^\\*scratch\\*$")
+                   (name . "^\\*Messages\\*$")
+                   (name . "^\\*doom\\*$")
+                   (name . "^\\*scratch\\*$")))
+	 ("Magit" (name . "\*magit"))
+	 ("Help" (or (name . "\*Help\*")
+		     (name . "\*Apropos\*")
+		     (name . "\*info\*"))))))
+
+(setq ibuffer-show-empty-filter-groups nil)
+
+(add-hook 'ibuffer-mode-hook
+	  '(lambda ()
+	     (ibuffer-auto-mode 1)
+	     (ibuffer-switch-to-saved-filter-groups "home")))
 ;;--------------------------
 ;; End of Customizations
 ;;--------------------------
