@@ -39,7 +39,7 @@
     :hook
     (elixir-mode . lsp)
     :init
-    (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls")
+    (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls/release")
     :config
     (dolist (match
            '("[/\\\\].direnv$"
@@ -212,6 +212,19 @@
 	  '(lambda ()
 	     (ibuffer-auto-mode 1)
 	     (ibuffer-switch-to-saved-filter-groups "home")))
+
+;; June 7, 2022 see if tree-sitter for syntax highlighting...
+(use-package! tree-sitter
+   :hook (prog-mode . turn-on-tree-sitter-mode)
+   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
+   :config
+   (require 'tree-sitter-langs)
+   ;; This makes every node a link to a section of code
+   (setq tree-sitter-debug-jump-buttons t
+         ;; and this highlights the entire sub tree in your code
+         tree-sitter-debug-highlight-jump-region t))
+
+
 ;;--------------------------
 ;; End of Customizations
 ;;--------------------------
