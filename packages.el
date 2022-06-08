@@ -14,8 +14,8 @@
 (package! tree-sitter-langs);;(package! dap-elixir)
 ;; polymode-mode-map for keybindings
 ;; C-n to move to next chunk, C-p to move previous
-;; (package! polymode :pin "44265e3")
-;; (package! polymode)
+;;(package! polymode :pin "44265e3")
+(package! polymode)
 
 ;;--------------------------
 ;; End of Customizations

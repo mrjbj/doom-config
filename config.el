@@ -115,24 +115,25 @@
     (apply f r)))
 
 ;; setup after web-mode and elixir-mode have been configured
-;; (use-package! polymode
-;;   :mode ("\.ex$" . poly-elixirweb-mode)
-;;   :init (setq! web-mode-engines-alist '(("elixir" . "\.ex$")))
-;;   :config
-;;   (define-hostmode poly-elixirweb-hostmode :mode 'elixir-mode)
-;;   (define-innermode poly-elixirweb-innermode
-;;     :mode 'web-mode
-;;     :head-matcher  (rx line-start (* space) "~L" (= 3 (char "\"'")) line-end)
-;;     :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
-;;     :head-mode 'host
-;;     :tail-mode 'host
-;;     :allow-nested nil
-;;     :fallback-mode 'host)
-;;   (define-polymode poly-elixirweb-mode
-;;     :hostmode 'poly-elixirweb-hostmode
-;;     :innermodes '(poly-elixirweb-innermode)))
+(use-package! polymode
+  :mode ("\.ex$" . poly-elixirweb-mode)
+  :init (setq! web-mode-engines-alist '(("elixir" . "\.ex$")))
+  :config
+  (define-hostmode poly-elixirweb-hostmode :mode 'elixir-mode)
+  (define-innermode poly-elixirweb-innermode
+    :mode 'web-mode
+    :head-matcher  (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
+    :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
+    :head-mode 'host
+    :tail-mode 'host
+    :allow-nested nil
+    :fallback-mode 'host)
+  (define-polymode poly-elixirweb-mode
+    :hostmode 'poly-elixirweb-hostmode
+    :innermodes '(poly-elixirweb-innermode)))
 
 
+(global-so-long-mode 0)
 
 ;;    :head-matcher "^[[:space:]]*~L\"\"\"[[:space:]]*\n"
 ;;    :tail-matcher "^[[:space:]]*\"\"\"[[:space:]]*\n"
