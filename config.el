@@ -2,8 +2,8 @@
 ;; Jason config
 (setq user-full-name "Jason Bruce Jones" user-mail-address "jason@brucejones.biz")
 (setq doom-theme 'doom-vibrant)
-(setq doom-font (font-spec :family "Iosevka Aile" :size 20 :weight 'Regular))
-(setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18 :weight 'Regular))
+(setq doom-font (font-spec :family "Iosevka Aile" :size 20 :weight 'Light))
+(setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18 :weight 'Light))
 (setq display-line-numbers-type 'relative)
 (setq projectile-project-search-path '("~/GitData/"))
 (setq org-directory "~/org/")
@@ -16,6 +16,7 @@
 (global-set-key (kbd "M-n") 'drag-stuff-down)
 ;;(global-set-key [f8] 'neotree-toggle)
 (global-set-key (kbd "C-0") 'ace-window)
+(map! :leader :desc "Switch Frame" "wf" #'+evil/next-frame)
 
 
 ;; -- clojure
@@ -25,7 +26,7 @@
 ;; ace window switching
 ;; --------------------
   (custom-set-faces!  '(aw-leading-char-face
-	                :foreground "white"
+     	                :foreground "white"
                         :background "red" weight bold
                         :height 2.5
                         :box (:line-width 4 :color "red")))
@@ -47,18 +48,11 @@
              "[/\\\\]deps"
              "[/\\\\]build"
              "[/\\\\]_build"))
-            (add-to-list 'lsp-file-watch-ignored match)))
-
-;;(after! lsp-mode
-;;  (dolist (match
-;;           '("[/\\\\].direnv$"
-;;             "[/\\\\]node_modules$"
-;;             "[/\\\\]deps"
-;;             "[/\\\\]build"
-;;             "[/\\\\]_build"))
-;;    (add-to-list 'lsp-file-watch-ignored match)))
+            (add-to-list 'lsp-file-watch-ignored match))
+    (setq lsp-file-watch-ignored-directories '(".git" "deps")))
 
 (after! lsp-ui
+  (setq lsp-lens-enable 't)
    (setq lsp-ui-sideline-show-hover '1)
    (setq lsp-ui-doc-enable 't)
    (setq lsp-ui-doc-position 'bottom)
@@ -71,70 +65,77 @@
 
 ;; enable code folding
 ;; keybindings include {z c, z o, z r} for close, open, recursive
-(setq lsp-enable-folding t)
-(use-package! lsp-origami)
-(add-hook! 'lsp-after-open-hook #'lsp-origami-try-enable)
+(use-package! lsp-origami
+  :config
+  (setq lsp-enable-folding 't)
+  :hook
+  (lsp-after-open-hook #'lsp-origami-try-enable)
+  )
 
 ;; screws up .elixir_ls directory sometimes, so set to nil and reload emacs whenever dependencies change
 (after! lsp-elixir
-  (setq lsp-elixir-fetch-deps nil))
+  (setq lsp-elixir-fetch-deps nil)
+  (setq lsp-elixir-suggest-specs nil)
+  (setq lsp-elixir-signatue-after-complete t)
+  )
 
-;; works! as long as elixir-credo is added as dependency in mix.exs
-(add-hook! elixir-mode
-  (setq flycheck-checker 'elixir-credo))
+;; flycheck config
+(defvar-local my/flycheck-local-cache nil)
+(defun my/flycheck-checker-get (fn checker property)
+  (or (alist-get property (alist-get checker my/flycheck-local-cache))
+      (funcall fn checker property)))
+(advice-add 'flycheck-checker-get :around 'my/flycheck-checker-get)
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'elixir-mode)
+              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (elixir-credo)))))))
+            ))
+
 
 ;; configure web-mode for html.heex template files.
-(use-package! web-mode
+;; (use-package! web-mode
+;;   :config
+;;         (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+;;         (add-to-list 'auto-mode-alist '("\\.heex\\'" . web-mode))
+;;         (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
+;;         (add-to-list '+format-on-save-enabled-modes 'web-mode 'append) ;;will disable format-all in web-mode buffers)
+;;         (set-face-attribute 'web-mode-html-tag-face nil :foreground "Orange")
+;;         (set-face-attribute 'web-mode-html-attr-name-face nil :foreground "Purple")
+;;         (set-face-attribute 'web-mode-doctype-face nil :foreground "Blue"))
+
+;;         (add-to-list 'auto-mode-alist '("\\.ex\\'" . web-mode))
+
+;; (define-advice web-mode-guess-engine-and-content-type (:around (f &rest r) guess-engine-by-extension)
+;;   (if (and buffer-file-name (equal "ex" (file-name-extension buffer-file-name)))
+;;       (progn (setq web-mode-content-type "html")
+;;          (setq web-mode-engine "elixir")
+;;          (web-mode-on-engine-setted))
+;;     (apply f r)))
+
+(use-package
+   polymode
+  :ensure t
+  :mode ("\\.ex\\'" . poly-elixir-web-mode)
+  :init (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
   :config
-        (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-        (add-to-list 'auto-mode-alist '("\\.heex\\'" . web-mode))
-        (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
-        (add-to-list '+format-on-save-enabled-modes 'web-mode 'append) ;;will disable format-all in web-mode buffers)
-        (set-face-attribute 'web-mode-html-tag-face nil :foreground "Orange")
-        (set-face-attribute 'web-mode-html-attr-name-face nil :foreground "Purple")
-        (set-face-attribute 'web-mode-doctype-face nil :foreground "Blue"))
-
-        ;; (add-to-list 'auto-mode-alist '("\\.ex\\'" . web-mode))
-
-(setq mmm-global-mode 'maybe)
-(setq mmm-parse-when-idle 't)
-(setq mmm-set-file-name-for-modes '(web-mode))
-(custom-set-faces '(mmm-default-submode-face ((t (:background nil)))))
-(let ((class 'elixir-eex)
-    (submode 'web-mode)
-    (front "^[ ]+~L\"\"\"")
-    (back "^[ ]+\"\"\""))
-  (mmm-add-classes (list (list class :submode submode :front front :back back)))
-  (mmm-add-mode-ext-class 'elixir-mode nil class))
-
-(define-advice web-mode-guess-engine-and-content-type (:around (f &rest r) guess-engine-by-extension)
-  (if (and buffer-file-name (equal "ex" (file-name-extension buffer-file-name)))
-      (progn (setq web-mode-content-type "html")
-         (setq web-mode-engine "elixir")
-         (web-mode-on-engine-setted))
-    (apply f r)))
-
-;; setup after web-mode and elixir-mode have been configured
-(use-package! polymode
-  :mode ("\.ex$" . poly-elixirweb-mode)
-  :init (setq! web-mode-engines-alist '(("elixir" . "\.ex$")))
-  :config
-  (define-hostmode poly-elixirweb-hostmode :mode 'elixir-mode)
-  (define-innermode poly-elixirweb-innermode
+  (define-hostmode poly-elixir-hostmode :mode 'elixir-mode)
+  (define-innermode poly-surface-expr-elixir-innermode
     :mode 'web-mode
-    :head-matcher  (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
+    :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
     :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
     :head-mode 'host
     :tail-mode 'host
     :allow-nested nil
+    :keep-in-mode 'host
     :fallback-mode 'host)
-  (define-polymode poly-elixirweb-mode
-    :hostmode 'poly-elixirweb-hostmode
-    :innermodes '(poly-elixirweb-innermode)))
+  (define-polymode poly-elixir-web-mode
+    :hostmode 'poly-elixir-hostmode
+    :innermodes '(poly-surface-expr-elixir-innermode)))
 
 
 (global-so-long-mode 0)
 
+    ;; :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
 ;;    :head-matcher "^[[:space:]]*~L\"\"\"[[:space:]]*\n"
 ;;    :tail-matcher "^[[:space:]]*\"\"\"[[:space:]]*\n"
 
@@ -215,15 +216,15 @@
 	     (ibuffer-switch-to-saved-filter-groups "home")))
 
 ;; June 7, 2022 see if tree-sitter for syntax highlighting...
-(use-package! tree-sitter
-   :hook (prog-mode . turn-on-tree-sitter-mode)
-   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
-   :config
-   (require 'tree-sitter-langs)
-   ;; This makes every node a link to a section of code
-   (setq tree-sitter-debug-jump-buttons t
-         ;; and this highlights the entire sub tree in your code
-         tree-sitter-debug-highlight-jump-region t))
+;; (use-package! tree-sitter
+;;    :hook (prog-mode . turn-on-tree-sitter-mode)
+;;    :hook (tree-sitter-after-on . tree-sitter-hl-mode)
+;;    :config
+;;    (require 'tree-sitter-langs)
+;;    ;; This makes every node a link to a section of code
+;;    (setq tree-sitter-debug-jump-buttons t
+;;          ;; and this highlights the entire sub tree in your code
+;;          tree-sitter-debug-highlight-jump-region t))
 
 
 ;;--------------------------

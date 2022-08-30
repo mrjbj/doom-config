@@ -7,10 +7,10 @@
 ;; jbj packages
 (package! zoom-window)
 (package! lsp-origami)
-(package! mmm-mode)
+;; (package! mmm-mode)
 
 ;; June 7, 2022
-(package! tree-sitter)
+;; (package! tree-sitter)
 (package! tree-sitter-langs);;(package! dap-elixir)
 ;; polymode-mode-map for keybindings
 ;; C-n to move to next chunk, C-p to move previous

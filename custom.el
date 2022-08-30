@@ -42,10 +42,12 @@
     (cons 320 "#754f56")
     (cons 340 "#62686E")
     (cons 360 "#62686E")))
- '(vc-annotate-very-old-color nil))
+ '(vc-annotate-very-old-color nil)
+ '(warning-suppress-types '((before-save-hook) (before-save-hook))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(aw-leading-char-face ((t (:foreground "white" :background "red" weight bold :height 2.5 :box (:line-width 4 :color "red"))))))
+ '(aw-leading-char-face ((t (:foreground "white" :background "red" weight bold :height 2.5 :box (:line-width 4 :color "red")))))
+ '(mmm-default-submode-face ((t (:background nil)))))
