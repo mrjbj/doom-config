@@ -17,6 +17,8 @@
 ;;(package! polymode :pin "44265e3")
 (package! polymode)
 
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 ;;--------------------------
 ;; End of Customizations
 ;;--------------------------

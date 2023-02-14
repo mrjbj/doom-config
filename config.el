@@ -63,6 +63,22 @@
    (setq lsp-ui-sideline-show-hover nil)
    (setq lsp-ui-peek-always-show nil))
 
+;; testing: from https://adam.kruszewski.name/2019-10-20-elixir-setup.html
+;; (after! lsp-ui
+;;   (setq lsp-ui-doc-max-height 13
+;;         lsp-ui-doc-max-width 80
+;;         lsp-ui-sideline-ignore-duplicate t
+;;         lsp-ui-doc-header t
+;;         lsp-ui-doc-include-signature t
+;;         lsp-ui-doc-position 'bottom
+;;         lsp-ui-doc-use-webkit nil
+;;         lsp-ui-flycheck-enable t
+;;         lsp-ui-imenu-kind-position 'left
+;;         lsp-ui-sideline-code-actions-prefix "💡"
+;;         ;; fix for completing candidates not showing after “Enum.”:
+;;         company-lsp-match-candidate-predicate #'company-lsp-match-candidate-prefix
+;;         ))
+
 ;; enable code folding
 ;; keybindings include {z c, z o, z r} for close, open, recursive
 (use-package! lsp-origami
@@ -75,7 +91,7 @@
 ;; screws up .elixir_ls directory sometimes, so set to nil and reload emacs whenever dependencies change
 (after! lsp-elixir
   (setq lsp-elixir-fetch-deps nil)
-  (setq lsp-elixir-suggest-specs nil)
+  (setq lsp-elixir-suggest-specs t)
   (setq lsp-elixir-signatue-after-complete t)
   )
 
@@ -226,8 +242,17 @@
 ;;          ;; and this highlights the entire sub tree in your code
 ;;          tree-sitter-debug-highlight-jump-region t))
 
+;; January 1, 2023 - trying to get Github co-pilot working
 
-;;--------------------------
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (("C-TAB" . 'copilot-accept-completion-by-word)
+         ("C-<tab>" . 'copilot-accept-completion-by-word)
+         :map copilot-completion-map
+         ("C-j" . 'copilot-accept-completion)
+         ("<tab>" . 'copilot-accept-completion)
+         ("TAB" . 'copilot-accept-completion)));;--------------------------
 ;; End of Customizations
 ;;--------------------------
 ;; Here are some additional functions/macros that could help you configure Doom:
