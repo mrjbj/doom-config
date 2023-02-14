@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: lv_handleparams
+# key: handleparams
+# --
+def handle_params(${1:params}, _uri, socket) do
+{:noreply, socket}
+end

@@ -1,0 +1,7 @@
+# key: handleevent
+# name: handle event
+# --
+def handle_event("${1:event}", _params, socket) do
+socket = assign(socket, :${2:var}, ${3:val})
+   {:noreply, socket}
+   end

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: lv_heex
+# key: heex
+# --
+~H"""
+${0}
+"""

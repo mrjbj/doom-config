@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: lc_module
+# key: lc
+# --
+defmodule LiveViewStudioWeb.${1}Component do
+  use LiveViewStudioWeb, :live_component
+
+  def render(assigns) do
+    ~H"""
+    $0
+    """
+  end
+end
