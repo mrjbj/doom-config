@@ -22,6 +22,12 @@
 ;; -- clojure
 (setq clojure-toplevel-inside-comment-form t)
 
+
+;;------------------
+;; JAVA
+;;------------------
+(setenv "JAVA_HOME"  "/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home/")
+(setq lsp-java-java-path "/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home/bin/java")
 ;; --------------------
 ;; ace window switching
 ;; --------------------
@@ -39,6 +45,7 @@
     :diminish lsp-mode
     :hook
     (elixir-mode . lsp)
+    (java-mode . lsp)
     :init
     (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls/release")
     :config
@@ -245,11 +252,14 @@
 ;; January 1, 2023 - trying to get Github co-pilot working
 
 ;; accept completion from copilot and fallback to company
+
+(global-copilot-mode 1)
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (("C-TAB" . 'copilot-accept-completion-by-word)
          ("C-<tab>" . 'copilot-accept-completion-by-word)
          :map copilot-completion-map
+         ("C-[" . 'copilot-accept-completion)
          ("C-j" . 'copilot-accept-completion)
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)));;--------------------------
