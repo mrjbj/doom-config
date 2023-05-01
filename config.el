@@ -7,7 +7,9 @@
 (setq display-line-numbers-type 'relative)
 (setq projectile-project-search-path '("~/GitData/"))
 (setq org-directory "~/org/")
-
+(setq doom-vibrant-brighter-comments t)
+(setq auto-save-default nil)
+(eshell-git-prompt-use-theme 'powerline)
 ;; ------------
 ;; keymappings
 ;; ------------
@@ -31,45 +33,48 @@
 ;; --------------------
 ;; ace window switching
 ;; --------------------
-  (custom-set-faces!  '(aw-leading-char-face
-     	                :foreground "white"
-                        :background "red" weight bold
-                        :height 2.5
-                        :box (:line-width 4 :color "red")))
+(custom-set-faces!  '(aw-leading-char-face
+     	              :foreground "white"
+                      :background "red" weight bold
+                      :height 2.5
+                      :box (:line-width 4 :color "red")))
+
+;; (setq aw-ignored-buffers (delete "treemacs-mode" aw-ignored-buffers))
 
 ;;------------------
 ;; JBJ Elixir Config
 ;;------------------
-  (use-package! lsp-mode
-    :commands lsp
-    :diminish lsp-mode
-    :hook
-    (elixir-mode . lsp)
-    (java-mode . lsp)
-    :init
-    (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls/release")
-    :config
-    (dolist (match
+(use-package! lsp-mode
+  :commands lsp
+  :diminish lsp-mode
+  :hook
+  (elixir-mode . lsp)
+  (java-mode . lsp)
+  :init
+  (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls/release")
+  :config
+  (dolist (match
            '("[/\\\\].direnv$"
              "[/\\\\]node_modules$"
              "[/\\\\]deps"
              "[/\\\\]build"
              "[/\\\\]_build"))
-            (add-to-list 'lsp-file-watch-ignored match))
-    (setq lsp-file-watch-ignored-directories '(".git" "deps")))
+    (add-to-list 'lsp-file-watch-ignored match))
+  (setq lsp-file-watch-ignored-directories '(".git" "deps")))
 
 (after! lsp-ui
-  (setq lsp-lens-enable 't)
-   (setq lsp-ui-sideline-show-hover '1)
-   (setq lsp-ui-doc-enable 't)
-   (setq lsp-ui-doc-position 'bottom)
-   (setq lsp-ui-doc-show-with-cursor nil)
-   (setq lsp-ui-doc-show-with-mouse 't)
-   (setq lsp-ui-doc-header 't)
-   (setq lsp-ui-sideline-diagnostic-max-lines '10)
-   (setq lsp-ui-sideline-show-hover nil)
-   (setq lsp-ui-peek-always-show nil))
-
+  (setq lsp-lens-enable nil)
+  (setq lsp-ui-sideline-show-hover '1)
+  (setq lsp-ui-doc-enable 't)
+  (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-ui-doc-show-with-cursor nil)
+  (setq lsp-ui-doc-show-with-mouse 't)
+  (setq lsp-ui-doc-header 't)
+  (setq lsp-ui-sideline-diagnostic-max-lines '10)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-peek-always-show nil)
+  (setq lsp-diagnostics-provider :none)
+  (setq lsp-diagnostics-mode nil))
 ;; testing: from https://adam.kruszewski.name/2019-10-20-elixir-setup.html
 ;; (after! lsp-ui
 ;;   (setq lsp-ui-doc-max-height 13
@@ -115,6 +120,7 @@
             ))
 
 
+(add-to-list 'auto-mode-alist '("\\.heex\\'" . web-mode))
 ;; configure web-mode for html.heex template files.
 ;; (use-package! web-mode
 ;;   :config
@@ -136,7 +142,7 @@
 ;;     (apply f r)))
 
 (use-package
-   polymode
+  polymode
   :ensure t
   :mode ("\\.ex\\'" . poly-elixir-web-mode)
   :init (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
@@ -158,7 +164,7 @@
 
 (global-so-long-mode 0)
 
-    ;; :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
+;; :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
 ;;    :head-matcher "^[[:space:]]*~L\"\"\"[[:space:]]*\n"
 ;;    :tail-matcher "^[[:space:]]*\"\"\"[[:space:]]*\n"
 
@@ -167,7 +173,7 @@
       :desc "Zoom Window" "x" #'zoom-window-zoom)
 
 (after! zoom-window
-   (setq zoom-window-mode-line-color "DarkGreen"))
+  (setq zoom-window-mode-line-color "DarkGreen"))
 
 ;; search 1 level deep for git repos in GitData
 (after! projectile
@@ -213,19 +219,19 @@
       '(("home"
          ("Elixir" (mode . elixir-mode))
 	 ("Web" (or (mode . html-mode)
-			(mode . css-mode)))
+		    (mode . css-mode)))
 	 ("Config" (or (filename . ".doom.d")
-			     (filename . "emacs-config")))
+		       (filename . "emacs-config")))
          ("Elixir System" (or
-                   (name . "^\\*lsp-log\\*$")
-                   (name . "^\\*elixir-ls\\*$")
-                   (name . "^\\*alchemist-server\\*$")
-                   (name . "^\\*elixir-ls::stderr\\*$")))
+                           (name . "^\\*lsp-log\\*$")
+                           (name . "^\\*elixir-ls\\*$")
+                           (name . "^\\*alchemist-server\\*$")
+                           (name . "^\\*elixir-ls::stderr\\*$")))
          ("System" (or
-                   (name . "^\\*scratch\\*$")
-                   (name . "^\\*Messages\\*$")
-                   (name . "^\\*doom\\*$")
-                   (name . "^\\*scratch\\*$")))
+                    (name . "^\\*scratch\\*$")
+                    (name . "^\\*Messages\\*$")
+                    (name . "^\\*doom\\*$")
+                    (name . "^\\*scratch\\*$")))
 	 ("Magit" (name . "\*magit"))
 	 ("Help" (or (name . "\*Help\*")
 		     (name . "\*Apropos\*")

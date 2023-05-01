@@ -1,26 +1,59 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
+;; package! ->  defined in packages.el, loads packages not available via init.el. Run DOOM SYNC afterwards.
+;; use-package! -> defined in config.el, configures downloaded packages, including when to load, keybindings, hooks, initialization
+;; after! -> used to configure packages not directly managed by DOOM, run after package is loaded.
+;; map! -> defined in config.el, specify keybindings via ('define-key' or 'global-set-key', 'local-set-key' or 'evil-define-key')
+;;           https://discourse.doomemacs.org/t/how-to-re-bind-keys/560
+;;           map wraps key strings in (kbd) function so you don't have to.
+;;           - (kbd "TAB") evaluates to \t,
+;;           - (kbd "<tab>") evaluates to [tab]
+;;           - hierarchy of active keymaps (EMACS)
+;;             o global-map:
+;;             o {major-mode}-map: used for buffers w/ major mode
+;;             o {minor-mode}-map: more recently activated minor modes take precedence over earlier activated ones
+;;             o general-override-mode-map: used for overriding keymaps, the most specific, like !important in CSS
+;;
+;;           - hierarchy of active keymaps (evil maps)
+;;             o global: visible in all buffers of the corresponding state (e.g. evil-normal-state-map, evil-visual-state-map, evil-insert-state-map, etc.)
+;;             o buffer-local: evil-normal-state-local, evil-visual-state-local, etc.
+;;             o auxiliary: like normal python-mode-map is when in python-mode and normal state.
+;;             o Note: the first two apply to all buffers or current buffer, while auxiliary applies to state and mode.
+;;
+;;           - Can only bind after the keymap exists, so use after! to bind to a keymap that is not yet loaded.
+;;           (map!
+;;              :after python
+;;              :map python-mode-map
+;;              "C-c C-c" #'python-shell-send-buffer)
+
+
+;;--------------------------------
+;; Begin JBJ Customizations
+;;--------------------------------
 ;; gitconfig-mode and gitignore-mode helps magit when editing .gitignore and .gitconfig files
 (package! gitconfig-mode :recipe (:host github :repo "magit/git-modes" :files ("gitconfig-mode.el")))
 (package! gitignore-mode :recipe (:host github :repo "magit/git-modes" :files ("gitignore-mode.el")))
-;; jbj packages
 (package! zoom-window)
 (package! lsp-origami)
-;; (package! mmm-mode)
 
-;; June 7, 2022
-;; (package! tree-sitter)
-(package! tree-sitter-langs);;(package! dap-elixir)
+;; not needed in Emacs 29+ ?
+(package! tree-sitter)
+(package! tree-sitter-langs)
+;;(package! dap-elixir)
 ;; polymode-mode-map for keybindings
 ;; C-n to move to next chunk, C-p to move previous
-;;(package! polymode :pin "44265e3")
 (package! polymode)
+(package! eshell-git-prompt)
 
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 ;;--------------------------
 ;; End of Customizations
+;;--------------------------
+
+;;--------------------------
+;; DOOM Documentation
 ;;--------------------------
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or
