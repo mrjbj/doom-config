@@ -1,0 +1,287 @@
+#+title: Config.el Configuration for Doom Emacs
+#+PROPERTY: header-args:emacs-lisp :tangle config.el
+
+* Notes
+** Package.el
+*** Specifies which extra packages (outside of doom defaults specified in init.dl) are downloaded and available for use.
+*** Run DOOM SYNC after modifications.
+** Config.el
+*** use-package! -> configures available packages, specifying when to load, keybindings, hooks, initialization, custom values, etc.
+*** after! -> used to configure packages not directly managed by DOOM, run after package is loaded.
+*** map! -> specify keybindings via ('define-key' or 'global-set-key', 'local-set-key' or 'evil-define-key')
+
+* Notes on Keyboard Binding Hierarchy
+** https://discourse.doomemacs.org/t/how-to-re-bind-keys/560
+** Regular Emacs Keybinding
+*** global-set-key -> sets keybinding in global-map
+*** define-key -> sets keybinding in specified keymap
+*** (kbd "TAB") evaluates to \t,
+*** (kbd "<tab>") evaluates to [tab]
+** doom's Map! macro
+**** handles the (kbd "part") for you.
+**** Global ->  (map! :map KEYMAP "keys" #'command)
+**** Modifier -> (map! :map KEYMAP "modifer-key key key" 'command)
+**** Leader -> (map! :leader "key"  'command)
+**** Local -> (map! :map (MODE . KEYMAP) "key"  'command)
+** hierarchy of active keymaps (EMACS)
+*** global-map:
+*** {major-mode}-map: used for buffers w/ major mode
+*** {minor-mode}-map: more recently activated minor modes take precedence over earlier activated ones
+*** general-override-mode-map: used for overriding keymaps, the most specific, like !important in CSS
+** hierarchy of active keymaps (evil mode)
+*** global -> visible in all buffers of the corresponding state
+**** (e.g. evil-normal-state-map, evil-visual-state-map, evil-insert-state-map, etc.)
+*** buffer-local -> evil-normal-state-local, evil-visual-state-local, etc.
+*** auxiliary ->  like normal python-mode-map is when in python-mode and normal state.
+***  Note: the first two apply to all buffers or current buffer, while auxiliary applies to state and mode.
+** Notes
+*** Can only bind after the keymap exists, so use after! to bind to a keymap that is not yet loaded.
+(map! :after python :map python-mode-map "C-c C-c" #'python-shell-send-buffer)
+
+* Personalization, Themes, Fonts, etc.
+** Environment
+#+begin_src emacs-lisp
+(setq user-full-name "Jason Bruce Jones" user-mail-address "jason@brucejones.biz")
+(setq auto-save-default nil)
+(global-auto-revert-mode t)
+(setq projectile-project-search-path '("~/GitData/"))
+
+(custom-set-faces!  '(aw-leading-char-face
+     	              :foreground "white"
+                      :background "red" weight bold
+                      :height 2.5
+                      :box (:line-width 4 :color "red")))
+(global-so-long-mode 0)
+;; configure zoom-window
+(map! :leader
+      :desc "Zoom Window" "x" #'zoom-window-zoom)
+
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+(after! projectile
+  (setq projectile-enable-caching 'nil)
+  (setq projectile-project-search-path '(("~/GitData" . 1))))
+#+end_src
+** Zoom Window
+#+begin_src emacs-lisp
+(after! zoom-window
+  (setq zoom-window-mode-line-color "DarkGreen"))
+#+end_src
+** Copilot
+#+begin_src emacs-lisp
+(global-copilot-mode 1)
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (("C-TAB" . 'copilot-accept-completion-by-word)
+         ("C-<tab>" . 'copilot-accept-completion-by-word)
+         :map copilot-completion-map
+         ("C-[" . 'copilot-accept-completion)
+         ("C-j" . 'copilot-accept-completion)
+         ("
+         ("TAB" . 'copilot-accept-completion)))
+#+end_src
+** IBuffer
+#+begin_src emacs-lisp
+(setq ibuffer-saved-filter-groups
+      '(("home"
+         ("Elixir" (mode . elixir-mode))
+	 ("Web" (or (mode . html-mode)
+		    (mode . css-mode)))
+	 ("Config" (or (filename . ".doom.d")
+		       (filename . "emacs-config")))
+         ("Elixir System" (or
+                           (name . "^\\*lsp-log\\*$")
+                           (name . "^\\*elixir-ls\\*$")
+                           (name . "^\\*alchemist-server\\*$")
+                           (name . "^\\*elixir-ls::stderr\\*$")))
+         ("System" (or
+                    (name . "^\\*scratch\\*$")
+                    (name . "^\\*Messages\\*$")
+                    (name . "^\\*doom\\*$")
+                    (name . "^\\*scratch\\*$")))
+	 ("Magit" (name . "\*magit"))
+	 ("Help" (or (name . "\*Help\*")
+		     (name . "\*Apropos\*")
+		     (name . "\*info\*"))))))
+
+(setq ibuffer-show-empty-filter-groups nil)
+
+(add-hook 'ibuffer-mode-hook
+	  '(lambda ()
+	     (ibuffer-auto-mode 1)
+	     (ibuffer-switch-to-saved-filter-groups "home")))
+#+end_src
+** Font
+#+begin_src emacs-lisp
+;; font
+(setq doom-font (font-spec :family "Iosevka Aile" :size 20 :weight 'Light))
+(setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18 :weight 'Light))
+#+end_src
+
+** Theme
+#+begin_src emacs-lisp
+;; theme ;; (setq doom-theme 'misterioso) ;;(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-nord-aurora)
+(setq display-line-numbers-type 'relative)
+(setq doom-vibrant-brighter-comments t)
+(eshell-git-prompt-use-theme 'powerline)
+#+end_src
+
+** Org Mode
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+    (setq org-ellipsis " ▾")
+    (require 'org-tempo)
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("ex" . "src elixir"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python")))
+
+(setq org-directory "~/org/")
+(define-key evil-org-mode-map (kbd "<f9>") 'org-insert-structure-template)
+#+end_src
+* Keybindings
+** Global
+#+begin_src emacs-lisp
+(global-set-key (kbd "<f8>") '+treemacs/toggle)
+(global-set-key (kbd "s-<up>") 'drag-stuff-up)
+(global-set-key (kbd "s-<down>") 'drag-stuff-down)
+(global-set-key (kbd "C-0") 'ace-window)
+(define-key evil-normal-state-map "\C-e" 'evil-end-of-line)
+(map! :leader :desc "Switch Frame" "wf" #'+evil/next-frame)
+#+end_src
+** Multi-Cursor
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix-map ("d" . "Cursors")
+
+       (:desc "Make all " "m" #'evil-mc-make-all-cursors)
+       (:desc "Make & go next" "n" #'evil-mc-and-goto-next)
+       (:desc "No make but go next" "N" #'evil-mc-and-goto-next)
+
+       (:desc "Line beginning" "b" #'evil-mc-make-cursor-in-visual-selection-beg)
+       (:desc "Line endings" "e" #'evil-mc-make-cursor-in-visual-selection-end)
+
+       (:desc "Pause making" "p" #'evil-mc-pause-cursors)
+       (:desc "Make here" "h" #'evil-mc-make-cursor-here)
+       (:desc "Resume cursors" "r" #'evil-mc-resume-cursors)
+
+       (:desc "Undo last" "u" #'evil-mc-undo-all-cursors)
+       (:desc "Undo all" "U" #'evil-mc-undo-all-cursors)))
+#+end_src
+** Workspaces
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix-map ("e" . "Perspective")
+
+       (:desc "Next" "n" #'persp-next)
+       (:desc "Previous" "p" #'persp-prev)
+       (:desc "Kill buffer" "K" #'persp-kill-buffer)
+       (:desc "Window Switch" "S" #'persp-window-switch)
+       (:desc "Load full state" "l" #'persp-load-state-from-file)
+       (:desc "Load by name" "L" #'persp-load-from-file-by-names)
+       (:desc "Import Window Config" "i" #'persp-import-win-conf)
+       (:desc "Save to file by Name" "S" #'persp-save-to-file-by-names)
+       (:desc "Add buffer" "a" #'persp-add-buffer)
+       (:desc "Switch to buffer" "b" #'persp-switch-to-buffer)))
+#+end_src
+* Language Configurations
+** LSP Mode
+*** activate lsp-mode for elixir and java
+*** don't load until called for first time.
+*** ignore certain directories
+*** set up elixir-ls
+*** don't watch certain directories
+
+#+begin_src emacs-lisp
+(use-package! lsp-mode
+  :commands lsp
+  :diminish lsp-mode
+  :custom
+  (lsp-headerline-breadcrumb-enable t)
+  :hook
+    ((elixir-mode . lsp)
+    (java-mode . lsp)
+    (lsp-mode . lsp-headerline-breadcrumb-mode))
+  :init
+    (add-to-list 'exec-path "/Users/jasonjones/GitData/elixir-ls/release")
+  :config
+    (dolist (match
+            '("[/\\\\].direnv$"
+                "[/\\\\]node_modules$"
+                "[/\\\\]deps"
+                "[/\\\\]build"
+                "[/\\\\]_build"))
+    (add-to-list 'lsp-file-watch-ignored match))
+    (setq lsp-file-watch-ignored-directories '(".git" "deps")))
+#+end_src
+** LSP UI
+#+begin_src emacs-lisp
+(after! lsp-ui
+  (setq lsp-lens-enable nil)
+  (setq lsp-ui-sideline-show-hover '1)
+  (setq lsp-ui-doc-enable 't)
+  (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-ui-doc-show-with-cursor nil)
+  (setq lsp-ui-doc-show-with-mouse nil)
+  (setq lsp-ui-doc-header 't)
+  (setq lsp-ui-sideline-diagnostic-max-lines '10)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-peek-always-show nil)
+  (setq lsp-diagnostics-provider :auto)
+  (setq lsp-diagnostics-mode t))
+
+#+end_src
+** Flycheck
+#+begin_src emacs-lisp
+;; flycheck config
+(defvar-local my/flycheck-local-cache nil)
+(defun my/flycheck-checker-get (fn checker property)
+  (or (alist-get property (alist-get checker my/flycheck-local-cache))
+      (funcall fn checker property)))
+(advice-add 'flycheck-checker-get :around 'my/flycheck-checker-get)
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'elixir-mode)
+              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (elixir-credo)))))))
+            ))
+#+end_src
+** Java
+#+begin_src emacs-lisp
+;; JAVA
+(setenv "JAVA_HOME"  "/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home/")
+(setq lsp-java-java-path "/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home/bin/java")
+#+end_src
+** Elixir
+#+begin_src emacs-lisp
+(after! lsp-elixir
+  (setq lsp-elixir-fetch-deps nil)
+  (setq lsp-elixir-suggest-specs t)
+  (setq lsp-elixir-signatue-after-complete t))
+#+end_src
+** Elixir HEEX
+#+begin_src emacs-lisp
+;; heex
+(add-to-list 'auto-mode-alist '("\\.heex\\'" . web-mode))
+(use-package
+  polymode
+  :ensure t
+  :mode ("\\.ex\\'" . poly-elixir-web-mode)
+  :init (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
+  :config
+  (define-hostmode poly-elixir-hostmode :mode 'elixir-mode)
+  (define-innermode poly-surface-expr-elixir-innermode
+    :mode 'web-mode
+    :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
+    :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
+    :head-mode 'host
+    :tail-mode 'host
+    :allow-nested nil
+    :keep-in-mode 'host
+    :fallback-mode 'host)
+  (define-polymode poly-elixir-web-mode
+    :hostmode 'poly-elixir-hostmode
+    :innermodes '(poly-surface-expr-elixir-innermode)))
+#+end_src
