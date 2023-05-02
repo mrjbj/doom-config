@@ -7,5 +7,5 @@
 # 3. this script copies the local config into repo so it can be versiond
 #    and updated to github upon demand and thereby saved for use in future.
 
-cp -r ~/.doom.d/* .
+cp -r ~/.config/doom/* .
 echo "sync complete. Now, git commit and push when ready."
