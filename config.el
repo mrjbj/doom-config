@@ -28,7 +28,6 @@
          :map copilot-completion-map
          ("C-[" . 'copilot-accept-completion)
          ("C-j" . 'copilot-accept-completion)
-         ("
          ("TAB" . 'copilot-accept-completion)))
 
 (setq ibuffer-saved-filter-groups
@@ -56,7 +55,7 @@
 (setq ibuffer-show-empty-filter-groups nil)
 
 (add-hook 'ibuffer-mode-hook
-	  '(lambda ()
+	  #'(lambda ()
 	     (ibuffer-auto-mode 1)
 	     (ibuffer-switch-to-saved-filter-groups "home")))
 
@@ -79,7 +78,8 @@
     (add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 (setq org-directory "~/org/")
-(define-key evil-org-mode-map (kbd "<f9>") 'org-insert-structure-template)
+(with-eval-after-load 'evil-org
+  (define-key evil-org-mode-map (kbd "<f9>") 'org-insert-structure-template))
 
 (global-set-key (kbd "<f8>") '+treemacs/toggle)
 (global-set-key (kbd "s-<up>") 'drag-stuff-up)
@@ -177,22 +177,23 @@
 
 ;; heex
 (add-to-list 'auto-mode-alist '("\\.heex\\'" . web-mode))
-(use-package
-  polymode
-  :ensure t
-  :mode ("\\.ex\\'" . poly-elixir-web-mode)
-  :init (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
-  :config
-  (define-hostmode poly-elixir-hostmode :mode 'elixir-mode)
-  (define-innermode poly-surface-expr-elixir-innermode
-    :mode 'web-mode
-    :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
-    :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
-    :head-mode 'host
-    :tail-mode 'host
-    :allow-nested nil
-    :keep-in-mode 'host
-    :fallback-mode 'host)
-  (define-polymode poly-elixir-web-mode
-    :hostmode 'poly-elixir-hostmode
-    :innermodes '(poly-surface-expr-elixir-innermode)))
+;; this code is throwing a warning that 'make-variable-buffer-local needs to be callled at top level.  FIX ME'
+;; (use-package
+;;   polymode
+;;   :ensure t
+;;   :mode ("\\.ex\\'" . poly-elixir-web-mode)
+;;   :init (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
+;;   :config
+;;   (define-hostmode poly-elixir-hostmode :mode 'elixir-mode)
+;;   (define-innermode poly-surface-expr-elixir-innermode
+;;     :mode 'web-mode
+;;     :head-matcher (rx line-start (* space) "~H" (= 3 (char "\"'")) line-end)
+;;     :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
+;;     :head-mode 'host
+;;     :tail-mode 'host
+;;     :allow-nested nil
+;;     :keep-in-mode 'host
+;;     :fallback-mode 'host)
+;;   (define-polymode poly-elixir-web-mode
+;;     :hostmode 'poly-elixir-hostmode
+;;     :innermodes '(poly-surface-expr-elixir-innermode)))
